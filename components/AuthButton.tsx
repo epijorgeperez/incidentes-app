@@ -4,9 +4,10 @@ import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
 
 export default function AuthButton() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
   const supabase = createClient();
 
