@@ -1,30 +1,45 @@
-import { createClient } from "@/utils/supabase/server";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+'use client'
 
-export default async function AuthButton() {
+import { createClient } from "@/utils/supabase/client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
+
+export default function AuthButton() {
+  const [user, setUser] = useState(null);
+  const router = useRouter();
   const supabase = createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    fetchUser();
 
-  const signOut = async () => {
-    "use server";
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
 
-    const supabase = createClient();
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [supabase.auth]);
+
+  const handleSignOut = async () => {
     await supabase.auth.signOut();
-    return redirect("/login");
+    router.push('/login');
   };
 
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.email}!
-      <form action={signOut}>
-        <button className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover">
-          Logout
-        </button>
-      </form>
+      ¡Hola {user.email}!
+      <button
+        onClick={handleSignOut}
+        className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
+      >
+        Logout
+      </button>
     </div>
   ) : (
     <div className="flex gap-2">

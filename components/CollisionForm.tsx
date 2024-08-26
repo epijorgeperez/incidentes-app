@@ -1,84 +1,135 @@
- "use client";
+'use client'
 
-import { useState } from "react";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { useForm } from "react-hook-form"
 
 export default function CollisionForm() {
-  const [formData, setFormData] = useState({
-    sucursal: "",
-    subproceso: "",
-    tipo_colision: "",
-    fecha: "",
-    dias_incapacidad: "",
-    atencion_imss: false,
-    report: null as File | null,
-  });
+  const [file, setFile] = useState<File | null>(null)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-    }));
-  };
+  const form = useForm({
+    defaultValues: {
+      sucursal: "",
+      subproceso: "",
+      tipo_colision: "",
+      fecha: "",
+      dias_incapacidad: "",
+      atencion_imss: false,
+    },
+  })
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFormData(prev => ({ ...prev, report: e.target.files![0] }));
+      setFile(e.target.files[0])
     }
-  };
+  }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (data: any) => {
+    console.log({ ...data, report: file })
     // Handle form submission here (e.g., send data to API)
-    console.log(formData);
-  };
+  }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <h3 className="text-lg font-medium mb-4">Report a Collision</h3>
-      
-      <div>
-        <label htmlFor="sucursal" className="block text-sm font-medium text-gray-700">Sucursal</label>
-        <input type="text" id="sucursal" name="sucursal" value={formData.sucursal} onChange={handleChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-      </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="sucursal"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Sucursal</FormLabel>
+              <FormControl>
+                <Input {...field} required />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-      <div>
-        <label htmlFor="subproceso" className="block text-sm font-medium text-gray-700">Subproceso</label>
-        <input type="text" id="subproceso" name="subproceso" value={formData.subproceso} onChange={handleChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-      </div>
+        <FormField
+          control={form.control}
+          name="subproceso"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Subproceso</FormLabel>
+              <FormControl>
+                <Input {...field} required />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-      <div>
-        <label htmlFor="tipo_colision" className="block text-sm font-medium text-gray-700">Tipo de Colisión</label>
-        <input type="text" id="tipo_colision" name="tipo_colision" value={formData.tipo_colision} onChange={handleChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-      </div>
+        <FormField
+          control={form.control}
+          name="tipo_colision"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tipo de Colisión</FormLabel>
+              <FormControl>
+                <Input {...field} required />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-      <div>
-        <label htmlFor="fecha" className="block text-sm font-medium text-gray-700">Fecha</label>
-        <input type="date" id="fecha" name="fecha" value={formData.fecha} onChange={handleChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-      </div>
+        <FormField
+          control={form.control}
+          name="fecha"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Fecha</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} required />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-      <div>
-        <label htmlFor="dias_incapacidad" className="block text-sm font-medium text-gray-700">Días de Incapacidad</label>
-        <input type="number" id="dias_incapacidad" name="dias_incapacidad" value={formData.dias_incapacidad} onChange={handleChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-      </div>
+        <FormField
+          control={form.control}
+          name="dias_incapacidad"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Días de Incapacidad</FormLabel>
+              <FormControl>
+                <Input type="number" {...field} required />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-      <div>
-        <label className="flex items-center">
-          <input type="checkbox" name="atencion_imss" checked={formData.atencion_imss} onChange={handleChange} className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-          <span className="ml-2 text-sm text-gray-700">Atención IMSS</span>
-        </label>
-      </div>
+        <FormField
+          control={form.control}
+          name="atencion_imss"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>Atención IMSS</FormLabel>
+              </div>
+            </FormItem>
+          )}
+        />
 
-      <div>
-        <label htmlFor="report" className="block text-sm font-medium text-gray-700">Upload Report</label>
-        <input type="file" id="report" name="report" onChange={handleFileChange} className="mt-1 block w-full" />
-      </div>
+        <FormItem>
+          <FormLabel htmlFor="report">Upload Report</FormLabel>
+          <FormControl>
+            <Input id="report" type="file" onChange={handleFileChange} />
+          </FormControl>
+        </FormItem>
 
-      <div>
-        <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+        <Button type="submit" className="w-full">
           Submit Collision Report
-        </button>
-      </div>
-    </form>
-  );
+        </Button>
+      </form>
+    </Form>
+  )
 }
